@@ -1,0 +1,10 @@
+[build-system]
+requires = ["setuptools", "wheel"]
+
+[project]
+name = "VSafer"
+requires-python = ">=3.8"
+version = "2023.06.12"
+
+[tool.setuptools]
+packages = ["vsafer"]
