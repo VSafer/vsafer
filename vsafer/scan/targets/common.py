@@ -122,9 +122,14 @@ common_targets: List[ScanTarget] = [
         "공동인증서/전자서명 솔루션",
         TargetPath(
             BasePath.ProgramFiles32,
-            "C:\\Program Files (x86)\\Battle.net\\Battle.net.exe",
+            "SoftForum\\XecureWeb\\AnySign\\dll\\AnySign4PC.exe",
         ),
-        None,
+        (
+            TargetPath(
+                BasePath.ProgramFiles32,
+                "SoftForum\\XecureWeb\\AnySign\\uninst.exe",
+            ).join(),
+        ),
         TargetPath(BasePath.Root, "luigi"),
         [
             Vulnerability(
@@ -133,7 +138,7 @@ common_targets: List[ScanTarget] = [
                     "KISA 보안공지",
                     "https://www.boho.or.kr/kr/bbs/view.do?searchCnd=1&bbsId=B0000133&searchWrd=&menuNo=205020&pageIndex=1&categoryCode=&nttId=35011",
                 ),
-                VersionRange(None, (9999, 1, 1, 6)),
+                VersionRange((1, 1, 0, 0), (1, 1, 1, 6)),
                 (1, 1, 2, 0),
             )
         ],
