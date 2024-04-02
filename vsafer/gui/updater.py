@@ -41,7 +41,7 @@ class Updater(QObject):
         if resp == "":
             return
         # Remove possible newline before EOF
-        if resp[-1] == '\n':
+        if resp[-1] == "\n":
             resp = resp[:-1]
         latest_version = StrictVersion(resp)
         self.reply.deleteLater()
@@ -78,7 +78,7 @@ class Updater(QObject):
         url = self.reply.readAll().data().decode()
         self.reply.deleteLater()
         # Remove possible newline before EOF
-        if url[-1] == '\n':
+        if url[-1] == "\n":
             url = url[:-1]
         self.__download_to_path(url)
 

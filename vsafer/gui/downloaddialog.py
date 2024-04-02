@@ -61,9 +61,7 @@ class DownloadDialog(QDialog):
 
         req = QNetworkRequest(QUrl(url))
         req.setAttribute(QNetworkRequest.FollowRedirectsAttribute, True)
-        self.reply: Optional[QNetworkReply] = self.manager.get(
-            req
-        )
+        self.reply: Optional[QNetworkReply] = self.manager.get(req)
         self.reply.downloadProgress.connect(self.__on_progress)
         self.reply.finished.connect(self.__on_finished)
         self.reply.readyRead.connect(self.__on_ready_read)

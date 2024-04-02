@@ -223,9 +223,14 @@ common_targets: List[ScanTarget] = [
     ScanTarget(
         "CrossEXService",
         "웹 환경 플러그인",
-        TargetPath(BasePath.ProgramFiles32, "iniLINE\\CrossEX\\crossex\\CrossEXService.exe"),
+        TargetPath(
+            BasePath.ProgramFiles32, "iniLINE\\CrossEX\\crossex\\CrossEXService.exe"
+        ),
         (
-            TargetPath(BasePath.ProgramFiles32, "iniLINE\\CrossEX\\crossex\\UninstallCrossEXLocal.exe").join(),
+            TargetPath(
+                BasePath.ProgramFiles32,
+                "iniLINE\\CrossEX\\crossex\\UninstallCrossEXLocal.exe",
+            ).join(),
         ),
         TargetPath(BasePath.Root, "luigi"),
         [
