@@ -55,8 +55,8 @@ class MainWindow(QMainWindow):
         self.__do_scan()
 
     def resizeEvent(self, event):
-        self.__tree_widget.setColumnWidth(0, self.__central_widget.width() // 3)
         self.__tree_widget.setColumnWidth(1, self.__central_widget.width() // 3)
+        self.__tree_widget.setColumnWidth(2, self.__central_widget.width() // 3)
         super().resizeEvent(event)
 
     def __setup_layout(self):
@@ -71,18 +71,18 @@ class MainWindow(QMainWindow):
 
         header = self.__tree_widget.header()
         header.setStretchLastSection(False)
-        header.setSectionResizeMode(2, QHeaderView.ResizeMode.Stretch)
-        header.setSectionResizeMode(3, QHeaderView.ResizeMode.Stretch)
-        header.resizeSection(1, 300)
+        header.resizeSection(0, 10)
         header.resizeSection(2, 300)
-        header.resizeSection(4, 10)
+        header.resizeSection(3, 300)
+        header.setSectionResizeMode(3, QHeaderView.ResizeMode.Stretch)
+        header.setSectionResizeMode(4, QHeaderView.ResizeMode.Stretch)
 
         header_item = self.__tree_widget.headerItem()
-        header_item.setText(0, "이름")
-        header_item.setText(1, "상세")
-        header_item.setText(2, "설치된 버전")
-        header_item.setText(3, "취약점 해결 버전")
-        header_item.setText(4, "")
+        header_item.setText(0, "")
+        header_item.setText(1, "이름")
+        header_item.setText(2, "상세")
+        header_item.setText(3, "설치된 버전")
+        header_item.setText(4, "취약점 해결 버전")
 
         self.layout.addWidget(self.__tree_widget)
 
@@ -99,6 +99,21 @@ class MainWindow(QMainWindow):
         self.action_scan.setText("다시 검사")
         self.action_scan.triggered.connect(self.__do_scan)
         self.menu_scan.addAction(self.action_scan)
+
+        self.menu_uninst = QMenu(parent=self.menubar)
+        self.menu_uninst.setObjectName("menu_uninst")
+        self.menu_uninst.setTitle("제거")
+        self.menubar.addAction(self.menu_uninst.menuAction())
+
+        self.action_uninst_sel = QAction("action_uninst_sel")
+        self.action_uninst_sel.setText("선택 제거")
+        self.action_uninst_sel.triggered.connect(self.__do_clean)
+        self.menu_uninst.addAction(self.action_uninst_sel)
+
+        self.action_uninst_all = QAction("action_uninst_all")
+        self.action_uninst_all.setText("모두 제거")
+        self.action_uninst_all.triggered.connect(self.__do_cleanall)
+        self.menu_uninst.addAction(self.action_uninst_all)
 
         self.menu_help = QMenu(parent=self.menubar)
         self.menu_help.setObjectName("menu_help")
@@ -142,28 +157,28 @@ class MainWindow(QMainWindow):
                 | Qt.ItemFlag.ItemIsUserCheckable
             )
             target_item.setFlags(flags)
-            target_item.setCheckState(4, Qt.Unchecked)
+            target_item.setCheckState(0, Qt.Unchecked)
 
-            target_item.setText(0, res.target.name)
-            target_item.setText(1, res.target.description)
+            target_item.setText(1, res.target.name)
+            target_item.setText(2, res.target.description)
             target_item.setExpanded(True)
 
             target_item.target = res.target
 
             for vuln in res.vulns_found:
                 vuln_item = QTreeWidgetItem(target_item)
-                vuln_item.setText(0, vuln.name)
+                vuln_item.setText(1, vuln.name)
                 url_label = QLabel()
                 url_label.setText(f'<a href="{vuln.source.url}">{vuln.source.name}</a>')
                 url_label.setTextInteractionFlags(
                     Qt.TextInteractionFlag.TextBrowserInteraction
                 )
                 url_label.setOpenExternalLinks(True)
-                self.__tree_widget.setItemWidget(vuln_item, 1, url_label)
-                vuln_item.setText(2, guiutils.version_tostring(res.system_ver))
-                vuln_item.setText(3, guiutils.version_tostring(vuln.resolved_version))
+                self.__tree_widget.setItemWidget(vuln_item, 2, url_label)
+                vuln_item.setText(3, guiutils.version_tostring(res.system_ver))
+                vuln_item.setText(4, guiutils.version_tostring(vuln.resolved_version))
                 if res.target.uninstaller == None:
-                    target_item.setData(4, Qt.CheckStateRole, QVariant())
+                    target_item.setData(0, Qt.CheckStateRole, QVariant())
                     # flags = target_item.flags()
                     # flags &= ~Qt.ItemFlag.ItemIsUserCheckable
                     # target_item.setFlags(flags)
@@ -183,7 +198,7 @@ class MainWindow(QMainWindow):
         )
         quarantine.clicked.connect(self.__do_quarantine)
         clean = self.__vuln_buttonbox.addButton(
-            "제거", QDialogButtonBox.ButtonRole.ActionRole
+            "선택 제거", QDialogButtonBox.ButtonRole.ActionRole
         )
         clean.clicked.connect(self.__do_clean)
 
@@ -206,7 +221,7 @@ class MainWindow(QMainWindow):
         root = self.__tree_widget.invisibleRootItem()
         for i in range(root.childCount()):
             item = root.child(i)
-            if item.checkState(4) == Qt.Checked:
+            if item.checkState(0) == Qt.Checked:
                 targets.append(item.target)
         return targets
 
