@@ -17,6 +17,7 @@ from PyQt5.QtWidgets import (
     QTreeWidgetItem,
     QLabel,
     QDialogButtonBox,
+    QStyle,
 )
 
 import vsafer.gui.utils as guiutils
@@ -41,8 +42,8 @@ class MainWindow(QMainWindow):
         self.__setup_layout()
 
         self.__setup_menu_bar()
-        self.__setup_tree_widget()
         self.__setup_vuln_buttonbox()
+        self.__setup_tree_widget()
 
         self.setAttribute(Qt.WA_DontShowOnScreen, True)
         self.show()
@@ -177,12 +178,14 @@ class MainWindow(QMainWindow):
                 self.__tree_widget.setItemWidget(vuln_item, 2, url_label)
                 vuln_item.setText(3, guiutils.version_tostring(res.system_ver))
                 vuln_item.setText(4, guiutils.version_tostring(vuln.resolved_version))
-                if res.target.uninstaller == None:
-                    target_item.setData(0, Qt.CheckStateRole, QVariant())
-                    # flags = target_item.flags()
-                    # flags &= ~Qt.ItemFlag.ItemIsUserCheckable
-                    # target_item.setFlags(flags)
-                    # target_item.setDisabled(True)
+
+            if res.target.uninstaller == None:
+                target_item.setData(0, Qt.CheckStateRole, QVariant())
+                target_item.setText(1, res.target.name + " (제거 미구현)")
+                flags = target_item.flags()
+                flags &= ~Qt.ItemFlag.ItemIsUserCheckable
+                target_item.setFlags(flags)
+                target_item.setDisabled(True)
 
     def _do_scan_quiet(self):
         self.__do_scan(show_msgbox=False)
@@ -192,6 +195,7 @@ class MainWindow(QMainWindow):
         rescan = self.__vuln_buttonbox.addButton(
             "다시 검사", QDialogButtonBox.ButtonRole.ActionRole
         )
+        rescan.setIcon(self.style().standardIcon(QStyle.SP_BrowserReload))
         rescan.clicked.connect(self.__do_scan)
         quarantine = self.__vuln_buttonbox.addButton(
             "격리", QDialogButtonBox.ButtonRole.ActionRole
@@ -200,14 +204,16 @@ class MainWindow(QMainWindow):
         clean = self.__vuln_buttonbox.addButton(
             "선택 제거", QDialogButtonBox.ButtonRole.ActionRole
         )
+        clean.setIcon(self.style().standardIcon(QStyle.SP_DialogDiscardButton))
         clean.clicked.connect(self.__do_clean)
 
         cleanall = self.__vuln_buttonbox.addButton(
             "모두 제거", QDialogButtonBox.ButtonRole.ActionRole
         )
+        cleanall.setIcon(self.style().standardIcon(QStyle.SP_TrashIcon))
         cleanall.clicked.connect(self.__do_cleanall)
 
-        self.layout.addWidget(self.__vuln_buttonbox)
+        self.layout.addWidget(self.__vuln_buttonbox, alignment=Qt.AlignLeft)
         quarantine.setVisible(False)
 
     def __get_all_targets(self):
