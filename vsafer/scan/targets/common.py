@@ -221,6 +221,26 @@ common_targets: List[ScanTarget] = [
         ],
     ),
     ScanTarget(
+        "CrossEXService",
+        "웹 환경 플러그인",
+        TargetPath(BasePath.ProgramFiles32, "iniLINE\\CrossEX\\crossex\\CrossEXService.exe"),
+        (
+            TargetPath(BasePath.ProgramFiles32, "iniLINE\\CrossEX\\crossex\\UninstallCrossEXLocal.exe").join(),
+        ),
+        TargetPath(BasePath.Root, "luigi"),
+        [
+            Vulnerability(
+                "크로스 사이트 스크립팅 취약점 등",
+                VulnSource(
+                    "KISA 보안공지",
+                    "https://boho.or.kr/kr/bbs/view.do?searchCnd=1&bbsId=B0000133&searchWrd=&menuNo=205020&pageIndex=1&categoryCode=&nttId=67136",
+                ),
+                VersionRange(None, (1, 0, 2, 9)),
+                (1, 0, 2, 10),
+            )
+        ],
+    ),
+    ScanTarget(
         "INISAFE CrossWeb EX V3",
         "공동인증서/전자서명 솔루션",
         TargetPath(
